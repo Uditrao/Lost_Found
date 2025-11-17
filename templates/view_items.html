@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Items - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">  <!-- For icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+      .item-image {
+        max-height: 220px;
+        width: 100%;
+        object-fit: contain;
+        background: #f9f9f9;
+        border-radius: 12px 12px 0 0;
+        display: block;
+        margin: 0 auto;
+      }
+      .card-header {
+  border-radius: 12px 12px 0 0;
+}
+.card {
+  border-radius: 12px;
+}
+
+    </style>
+</head>
+<body>
+<style>
+  .dash-navbar { padding: 10px 16px; }
+  .dash-navbar .navbar-brand { color: #2c3e50; letter-spacing: .5px; }
+  .dash-link { color: #5f6368 !important; font-weight: 500; position: relative; display: inline-block; transition: color .2s ease, transform .2s ease; }
+  .dash-link::after { content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0; background: #1a73e8; transition: width .2s ease; }
+  .dash-link:hover { color: #1a73e8 !important; transform: scale(1.06); }
+  .dash-link:hover::after { width: 100%; }
+  .dash-link.active { color: #1a73e8 !important; }
+  .dash-link.active::after { width: 100%; }
+  .avatar-btn { background: #1a73e8; color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+  .avatar-btn i { font-size: 18px; }
+</style>
+<nav class="navbar navbar-expand-lg dash-navbar bg-white border-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold">Lost & Found</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDash" aria-controls="navbarDash" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarDash">
+      <ul class="navbar-nav mx-auto gap-3">
+        <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/dashboard' %}active{% endif %}" href="/dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/report_lost' %}active{% endif %}" href="/report_lost">Report Lost</a></li>
+        <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/report_found' %}active{% endif %}" href="/report_found">Report Found</a></li>
+        <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/view_items' %}active{% endif %}" href="/view_items">View Items</a></li>
+        <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/my_claims' %}active{% endif %}" href="/my_claims">My Claims</a></li>
+        {% if session.get('is_admin') %}
+        <li class="nav-item"><a class="nav-link dash-link" href="/admin/claims">Admin</a></li>
+        {% endif %}
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small d-none d-md-inline">{{ session['user_name'] }}</span>
+        <a class="avatar-btn" href="/dashboard" aria-label="Open profile">
+          <i class="bi bi-person-fill"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="d-flex justify-content-center">
+        <div class="alert alert-danger w-50 text-center">
+          {{ messages[0] }}
+        </div>
+      </div>
+      {% endif %}
+    {% endwith %}
+    <div class="container mt-5">
+  <div class="card mb-5 shadow-sm rounded">
+
+
+    <div class="card shadow-sm rounded">
+      <div class="card-header text-center bg-primary text-white fs-4 fw-semibold">
+        Found Items
+      </div>
+      <div class="card-body">
+        <div class="row">
+          {% for item in found_items %}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+              <img src="/{{ item.image }}" class="item-image" alt="Item image">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-1">{{ item.title }}</h5>
+                <span class="badge bg-primary mb-2" style="width: fit-content;">Found</span>
+                <p class="card-text small text-muted mb-2" style="min-height:40px;">{{ item.description }}</p>
+                <p class="card-text mb-1"><i class="bi bi-geo-alt"></i> <b>Location:</b> {{ item.location }}</p>
+                <p class="card-text mb-2"><i class="bi bi-calendar-event"></i> <b>Date Found:</b> {{ item.date_found }}</p>
+                {% if session.get('user_id') %}
+                  {% set claimed = item.claimed_by_user %}
+                  {% if claimed %}
+                    <span class="badge bg-success">Claim {{ item.claim_status|capitalize }}</span>
+                  {% else %}
+                    <form action="/claim_item" method="POST" class="mt-auto text-center">
+                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                      <input type="hidden" name="item_type" value="found">
+                      <button type="submit" class="btn btn-warning w-100">Claim</button>
+                    </form>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card-header text-center bg-secondary text-white fs-4 fw-semibold">
+      Lost Items
+    </div>
+    <div class="card-body">
+      <div class="row">
+        {% for item in lost_items %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm border-0">
+            <img src="/{{ item.image }}" class="item-image" alt="Item image">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title mb-1">{{ item.title }}</h5>
+              <span class="badge bg-secondary mb-2" style="width: fit-content;">Lost</span>
+              <p class="card-text small text-muted mb-2" style="min-height:40px;">{{ item.description }}</p>
+              <p class="card-text mb-1"><i class="bi bi-geo-alt"></i> <b>Location:</b> {{ item.location }}</p>
+              <p class="card-text mb-2"><i class="bi bi-calendar-event"></i> <b>Date Lost:</b> {{ item.date_lost }}</p>
+              {% if session.get('user_id') %}
+                {% set claimed = item.claimed_by_user %}
+                {% if claimed %}
+                  <span class="badge bg-success">Claim {{ item.claim_status|capitalize }}</span>
+                {% else %}
+                  <form action="/claim_item" method="POST" class="mt-auto text-center">
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                    <input type="hidden" name="item_type" value="lost">
+                    <!-- <button type="submit" class="btn btn-warning w-100">Claim</button> -->
+                  <!-- </form> -->
+                  <a href="/report_found" class="btn btn-success">Report Found</a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  
+</div>
+
+</div>
+</body>
+</html>

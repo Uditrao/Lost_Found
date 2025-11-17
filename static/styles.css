@@ -1,0 +1,191 @@
+/* Global Styles */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --background-color: #f8f9fa;
+    --text-color: #2c3e50;
+    --light-gray: #ecf0f1;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--light-gray);
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn,
+.btn-warning,
+.btn-primary {
+    border-radius: 5px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--secondary-color);
+    color: #fff;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.btn-warning {
+    background-color: #f1c40f !important;
+    color: #333;
+    border: 1px solid #f1c40f !important;
+    box-shadow: none !important;
+}
+.btn-warning:hover, .btn-warning:focus {
+    background-color: #d4ac0d !important;
+    color: #fff;
+    border: 1px solid #d4ac0d !important;
+    box-shadow: none !important;
+}
+.btn:active, .btn:focus {
+    box-shadow: none !important;
+    background-image: none !important;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 5px;
+    border: 1px solid var(--light-gray);
+    padding: 0.75rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Alerts */
+.alert {
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Narrow, centered flash alerts */
+.flash-alert {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    padding: 2rem 1rem;
+}
+
+/* Tables */
+.table {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Images */
+.img-thumbnail {
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.img-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+/* Status Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #2ecc71;
+}
+
+.badge-warning {
+    background-color: #f1c40f;
+}
+
+.badge-danger {
+    background-color: var(--accent-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}

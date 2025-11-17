@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Lost & Found</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        {% if session.get('user_id') %}
+            {% if session.get('is_admin') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/claims">Admin Panel</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        {% endif %}
+      </ul>
+      
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+    <div class="text-center">
+        <h1>Welcome to the Lost & Found Portal</h1>
+        <p class="lead">Report or find lost items easily.</p>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% set cls = 'alert-info' %}
+          {% if category == 'success' %}
+            {% set cls = 'alert-success' %}
+          {% elif category == 'error' %}
+            {% set cls = 'alert-danger' %}
+          {% elif category == 'warning' %}
+            {% set cls = 'alert-warning' %}
+          {% endif %}
+          <div class="alert {{ cls }} flash-alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="auth-container">
+      <div class="form-container login">
+        <form method="POST" action="/login">
+          <h2>Login</h2>
+          <input type="email" name="email" placeholder="Email" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <button type="submit">Login</button>
+          <p class="toggle-text" style="margin-top:8px">
+            <a href="/forgot_password">Forgot password?</a>
+          </p>
+          <p class="toggle-text">Don’t have an account?
+            <a href="/register">Register</a>
+          </p>
+        </form>
+      </div>
+      <div class="side-container">
+        <h2>Welcome Back!</h2>
+        <p>Already have an account?</p>
+      </div>
+    </div>
+</div>
+</body>
+</html>

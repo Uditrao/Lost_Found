@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Lost & Found</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <style>
+    .dash-navbar { padding: 10px 16px; }
+    .dash-navbar .navbar-brand { color: #2c3e50; letter-spacing: .5px; }
+    .dash-link {
+      color: #5f6368 !important; font-weight: 500; position: relative; display: inline-block;
+      transition: color .2s ease, transform .2s ease;
+    }
+    .dash-link::after {
+      content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0;
+      background: #1a73e8; transition: width .2s ease;
+    }
+    .dash-link:hover { color: #1a73e8 !important; transform: scale(1.06); }
+    .dash-link:hover::after { width: 100%; }
+    .dash-link.active { color: #1a73e8 !important; }
+    .dash-link.active::after { width: 100%; }
+    .avatar-btn {
+      background: #1a73e8; color: #fff; border: none; width: 36px; height: 36px;
+      border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .avatar-btn i { font-size: 18px; }
+  </style>
+  <nav class="navbar navbar-expand-lg dash-navbar bg-white border-bottom">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold">Lost & Found</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarDash" aria-controls="navbarDash" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarDash">
+        <ul class="navbar-nav mx-auto gap-3">
+          <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/dashboard' %}active{% endif %}" href="/dashboard">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/report_lost' %}active{% endif %}" href="/report_lost">Report Lost</a></li>
+          <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/report_found' %}active{% endif %}" href="/report_found">Report Found</a></li>
+          <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/view_items' %}active{% endif %}" href="/view_items">View Items</a></li>
+          <li class="nav-item"><a class="nav-link dash-link {% if request.path=='/my_claims' %}active{% endif %}" href="/my_claims">My Claims</a></li>
+          
+          {% if session.get('is_admin') %}
+          <li class="nav-item"><a class="nav-link dash-link" href="/admin/claims">Admin</a></li>
+          {% endif %}
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small d-none d-md-inline">{{ session['user_name'] }}</span>
+          <button class="avatar-btn" data-bs-toggle="modal" data-bs-target="#profileModal" aria-label="Open profile">
+            <i class="bi bi-person-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+<div class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% set cls = 'alert-info' %}
+          {% if category == 'success' %}
+            {% set cls = 'alert-success' %}
+          {% elif category == 'error' %}
+            {% set cls = 'alert-danger' %}
+          {% elif category == 'warning' %}
+            {% set cls = 'alert-warning' %}
+          {% endif %}
+          <div class="alert {{ cls }} flash-alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <div class="dashboard-container text-center">
+      <h2>Welcome, {{ session['user_name'] }} 🎉</h2>
+      <p class="subtitle">What would you like to do today?</p>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-6 col-lg-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Report Lost Item</h5>
+                    <p class="card-text">Quickly report an item you’ve lost.</p>
+                    <a href="/report_lost" class="btn btn-primary">Report Lost</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Report Found Item</h5>
+                    <p class="card-text">Notify us about an item you have found.</p>
+                    <a href="/report_found" class="btn btn-success">Report Found</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">View All Items</h5>
+                    <p class="card-text">Browse the list of all reported items.</p>
+                    <a href="/view_items" class="btn btn-info">View Items</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">My Claims</h5>
+                    <p class="card-text">Track your claimed items and their status.</p>
+                    <a href="/my_claims" class="btn btn-warning text-white">My Claims</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div>
+</div>
+
+
+<!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="profileModalLabel">My Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        
+      <div class="modal-body">
+          <!-- Profile Info -->
+        <div class="text-center mb-3">
+          <h5>{{ session['user_name'] }}</h5>
+          <p class="text-muted">{{ session['email'] }}</p>
+        </div>
+        <!-- Update Profile Form -->
+        <form method="POST" action="/update_profile">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" value="{{ session['user_name'] }}" required>
+          </div>
+          
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Update Name</button>
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#passwordModal" data-bs-dismiss="modal">
+              Change Password
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <a href="/logout" class="btn btn-danger">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Change Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="passwordModalLabel">Change Password</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form method="POST" action="/change_password">
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input type="password" name="current_password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input type="password" name="new_password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Save New Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+</body>
+</html>
