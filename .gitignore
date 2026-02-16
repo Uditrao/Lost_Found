@@ -4,3 +4,5 @@ __pycache__/
 .env.*
 instance/
 .vscode/
+error.log
+static/uploads/

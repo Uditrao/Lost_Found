@@ -24,14 +24,26 @@ app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")     # <-- use App Passw
 app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
 mail = Mail(app)
 
-client = MongoClient(os.getenv("MONGO_URI")) 
-db = client["lost_found"]
-
-users = db.users
-lost_items = db.lost_items
-found_items = db.found_items
-claims = db.claims
-admins = db.admins
+try:
+    client = MongoClient(os.getenv("MONGO_URI"), serverSelectionTimeoutMS=5000)
+    # The ismaster command is cheap and does not require auth.
+    client.admin.command('ismaster')
+    db = client["lost_found"]
+    
+    users = db.users
+    lost_items = db.lost_items
+    found_items = db.found_items
+    claims = db.claims
+    admins = db.admins
+except Exception as e:
+    print(f"Error connecting to MongoDB: {e}")
+    # Fallback or exit if DB is essential
+    db = None
+    users = None
+    lost_items = None
+    found_items = None
+    claims = None
+    admins = None
 
 
 
