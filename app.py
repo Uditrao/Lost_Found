@@ -417,5 +417,4 @@ def make_admin(user_id):
     return f"User {user_id} is now an admin!"
 
 
-if __name__ == '__main__':
-    app.run()
+
