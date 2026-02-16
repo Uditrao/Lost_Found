@@ -1,4 +1,4 @@
-﻿Flask==3.1.0
+Flask==3.1.0
 Flask-Mail==0.10.0
 mysql-connector-python==9.2.0
 python-dotenv==1.0.1
@@ -12,3 +12,4 @@ Jinja2==3.1.6
 pymongo
 dnspython
 gunicorn
+# Fix encoding v2
