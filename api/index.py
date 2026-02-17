@@ -7,6 +7,8 @@ from flask_mail import Mail, Message
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
 load_dotenv()
 
 
@@ -44,6 +46,14 @@ except Exception as e:
     found_items = None
     claims = None
     admins = None
+
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 
 
@@ -199,16 +209,19 @@ def report_lost():
         date_lost = request.form['date_lost']
 
         image = request.files['image']
-        filename = secure_filename(image.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image.save(filepath)
+        if image:
+            # Upload to Cloudinary
+            upload_result = cloudinary.uploader.upload(image)
+            image_url = upload_result['secure_url']
+        else:
+            image_url = ""
 
         lost_items.insert_one({
             "title": title,
             "description": description,
             "location": location,
             "date_lost": date_lost,
-            "image": filepath,
+            "image": image_url,
             "user_id": session['user_id'],
             "collected": False
         })
@@ -229,16 +242,19 @@ def report_found():
 
         # image upload
         image = request.files['image']
-        filename = secure_filename(image.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        image.save(filepath)
+        if image:
+            # Upload to Cloudinary
+            upload_result = cloudinary.uploader.upload(image)
+            image_url = upload_result['secure_url']
+        else:
+            image_url = ""
 
         found_items.insert_one({
             "title": title,
             "description": description,
             "location": location,
             "date_found": date_found,
-            "image": filepath,
+            "image": image_url,
             "user_id": session['user_id']
         })
 
