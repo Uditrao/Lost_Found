@@ -48,10 +48,17 @@ except Exception as e:
     admins = None
 
 # Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
+
+if not all([CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET]):
+    print("WARNING: Cloudinary environment variables are missing. Image uploads will fail.")
+
 cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
     secure=True
 )
 
@@ -209,24 +216,34 @@ def report_lost():
         date_lost = request.form['date_lost']
 
         image = request.files['image']
-        if image:
-            # Upload to Cloudinary
-            upload_result = cloudinary.uploader.upload(image)
-            image_url = upload_result['secure_url']
-        else:
-            image_url = ""
+        image_url = ""
+        
+        try:
+            if image:
+                # Upload to Cloudinary
+                upload_result = cloudinary.uploader.upload(image)
+                image_url = upload_result.get('secure_url', "")
+            
+            if not lost_items:
+                flash("Database connection error. Please try again later.", "error")
+                return redirect('/dashboard')
 
-        lost_items.insert_one({
-            "title": title,
-            "description": description,
-            "location": location,
-            "date_lost": date_lost,
-            "image": image_url,
-            "user_id": session['user_id'],
-            "collected": False
-        })
-
-        return redirect('/view_items')
+            lost_items.insert_one({
+                "title": title,
+                "description": description,
+                "location": location,
+                "date_lost": date_lost,
+                "image": image_url,
+                "user_id": session['user_id'],
+                "collected": False
+            })
+            flash("Item reported successfully!", "success")
+            return redirect('/view_items')
+            
+        except Exception as e:
+            print(f"Error in report_lost: {e}")
+            flash(f"Error reporting item: {str(e)}", "error")
+            return redirect('/report_lost')
 
     return render_template('report_lost.html')
 
@@ -242,23 +259,33 @@ def report_found():
 
         # image upload
         image = request.files['image']
-        if image:
-            # Upload to Cloudinary
-            upload_result = cloudinary.uploader.upload(image)
-            image_url = upload_result['secure_url']
-        else:
-            image_url = ""
+        image_url = ""
 
-        found_items.insert_one({
-            "title": title,
-            "description": description,
-            "location": location,
-            "date_found": date_found,
-            "image": image_url,
-            "user_id": session['user_id']
-        })
+        try:
+            if image:
+                # Upload to Cloudinary
+                upload_result = cloudinary.uploader.upload(image)
+                image_url = upload_result.get('secure_url', "")
 
-        return redirect('/view_items')
+            if not found_items:
+                flash("Database connection error. Please try again later.", "error")
+                return redirect('/dashboard')
+
+            found_items.insert_one({
+                "title": title,
+                "description": description,
+                "location": location,
+                "date_found": date_found,
+                "image": image_url,
+                "user_id": session['user_id']
+            })
+            flash("Found item reported successfully!", "success")
+            return redirect('/view_items')
+            
+        except Exception as e:
+            print(f"Error in report_found: {e}")
+            flash(f"Error reporting item: {str(e)}", "error")
+            return redirect('/report_found')
 
     return render_template('report_found.html')
 
