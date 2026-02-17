@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from werkzeug.utils import secure_filename
 import os
-import mysql.connector
+
 import random
 from flask_mail import Mail, Message
 from pymongo import MongoClient
