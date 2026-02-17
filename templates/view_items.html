@@ -86,8 +86,7 @@
         <div class="row">
           {% for item in found_items %}
           <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-              <img src="/{{ item.image }}" class="item-image" alt="Item image">
+                <img src="{{ item.image }}" class="item-image" alt="Item image">
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title mb-1">{{ item.title }}</h5>
                 <span class="badge bg-primary mb-2" style="width: fit-content;">Found</span>
@@ -123,7 +122,7 @@
         {% for item in lost_items %}
         <div class="col-md-4 mb-4">
           <div class="card h-100 shadow-sm border-0">
-            <img src="/{{ item.image }}" class="item-image" alt="Item image">
+            <img src="{{ item.image }}" class="item-image" alt="Item image">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title mb-1">{{ item.title }}</h5>
               <span class="badge bg-secondary mb-2" style="width: fit-content;">Lost</span>
