@@ -9,3 +9,5 @@ email-validator==2.1.0.post1
 itsdangerous==2.1.2
 Werkzeug==2.3.7
 Jinja2==3.1.4
+pymongo
+dnspython
