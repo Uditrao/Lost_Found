@@ -224,7 +224,7 @@ def report_lost():
                 upload_result = cloudinary.uploader.upload(image)
                 image_url = upload_result.get('secure_url', "")
             
-            if not lost_items:
+            if lost_items is None:
                 flash("Database connection error. Please try again later.", "error")
                 return redirect('/dashboard')
 
@@ -267,7 +267,7 @@ def report_found():
                 upload_result = cloudinary.uploader.upload(image)
                 image_url = upload_result.get('secure_url', "")
 
-            if not found_items:
+            if found_items is None:
                 flash("Database connection error. Please try again later.", "error")
                 return redirect('/dashboard')
 
